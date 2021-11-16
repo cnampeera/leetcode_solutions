@@ -1,0 +1,45 @@
+-- Salaries Table:
+
+-- +---------------+---------+
+-- | Column Name   | Type    |
+-- +---------------+---------+
+-- | company_id    | int     |
+-- | employee_id   | int     |
+-- | employee_name | varchar |
+-- | salary        | int     |
+-- +---------------+---------+
+-- (company_id, employee_id) is the primary key for this table.
+-- Table contains the company id, the id, the name and the salary for an employee.
+ 
+
+-- Write an SQL query to find the salaries of the employees after applying taxes.
+
+-- The tax rate is calculated for each company based on the following criteria:
+
+-- 0% If the max salary of any employee in the company is less than 1000$.
+-- 24% If the max salary of any employee in the company is in the range [1000, 10000] inclusive.
+-- 49% If the max salary of any employee in the company is greater than 10000$.
+-- Return the result table in any order. Round the salary to the nearest integer.
+
+-- Solution
+
+
+with cte as (
+select 
+     company_id, 
+     employee_id, 
+     employee_name, 
+     salary, 
+     max(salary) over(partition by company_id) as maximum
+from salaries)
+
+select 
+     company_id, 
+     employee_id, 
+     employee_name,
+     case 
+         when t1.maximum<1000 then t1.sa
+         when t1.maximum between 1000 and 10000 then round(t1.sa*.76,0)
+         else round(t1.sa*.51,0)
+     end as salary
+from cte
